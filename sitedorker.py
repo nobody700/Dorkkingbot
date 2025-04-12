@@ -67,12 +67,12 @@ DESIGN_LIBRARIES = ["bootstrap", "tailwind", "bulma", "foundation", "materialize
 # ----------------------------------------------------------------------------------
 
 def setup_chrome_driver():
+def setup_chrome_driver():
     try:
         logger.info("Setting up ChromeDriver automatically...")
 
         chromedriver_url = (
-            "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/"
-            "131.0.6778.108/linux64/chromedriver-linux64.zip"
+            "https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.108/linux-arm64/chromedriver-linux-arm64.zip"
         )
 
         subprocess.run(['wget', chromedriver_url, '-O', 'chromedriver_linux64.zip'], check=True)
@@ -82,10 +82,10 @@ def setup_chrome_driver():
         local_path = os.path.expanduser("~/bin/chromedriver")
         os.makedirs(os.path.dirname(local_path), exist_ok=True)
 
-        subprocess.run(['mv', 'chromedriver-linux64/chromedriver', local_path], check=True)
+        subprocess.run(['mv', 'chromedriver-linux-arm64/chromedriver', local_path], check=True)
         subprocess.run(['chmod', '+x', local_path], check=True)
 
-        subprocess.run(['rm', '-rf', 'chromedriver_linux64.zip', 'chromedriver-linux64'], check=True)
+        subprocess.run(['rm', '-rf', 'chromedriver_linux64.zip', 'chromedriver-linux-arm64'], check=True)
         logger.info("ChromeDriver setup completed successfully.")
     except Exception as e:
         logger.error(f"Error setting up ChromeDriver: {e}")
