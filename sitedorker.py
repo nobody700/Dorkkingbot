@@ -68,29 +68,32 @@ DESIGN_LIBRARIES = ["bootstrap", "tailwind", "bulma", "foundation", "materialize
 
 def setup_chrome_driver():
     """
-    Attempt to install ChromeDriver (131.0.6778.108) on Ubuntu.
-    Comment out if you prefer to manage ChromeDriver manually.
+    Cross-platform setup for ChromeDriver. Skips 'apt-get' for non-Debian systems.
     """
     try:
         logger.info("Setting up ChromeDriver automatically...")
-        subprocess.run(['apt-get', 'update'], check=True)
-        subprocess.run(['apt-get', 'install', '-y', 'wget', 'unzip'], check=True)
 
+        # Skip package installation; assume wget/unzip are already present
         chromedriver_url = (
             "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/"
             "131.0.6778.108/linux64/chromedriver-linux64.zip"
         )
+
         subprocess.run(['wget', chromedriver_url, '-O', 'chromedriver_linux64.zip'], check=True)
         subprocess.run(['unzip', '-o', 'chromedriver_linux64.zip'], check=True)
-        subprocess.run(['mv', 'chromedriver-linux64/chromedriver', '/usr/local/bin/chromedriver'], check=True)
-        subprocess.run(['chmod', '+x', '/usr/local/bin/chromedriver'], check=True)
 
-        # Cleanup @Mod_By_Kamal
+        # Determine path
+        chromedriver_path = '/usr/local/bin/chromedriver'
+        if not os.path.exists(os.path.dirname(chromedriver_path)):
+            chromedriver_path = '/usr/bin/chromedriver'  # fallback
+
+        subprocess.run(['mv', 'chromedriver-linux64/chromedriver', chromedriver_path], check=True)
+        subprocess.run(['chmod', '+x', chromedriver_path], check=True)
+
         subprocess.run(['rm', '-rf', 'chromedriver_linux64.zip', 'chromedriver-linux64'], check=True)
         logger.info("ChromeDriver setup completed successfully.")
     except Exception as e:
         logger.error(f"Error setting up ChromeDriver: {e}")
-        # If it fails, you can comment out `raise` if you want to try using a pre-installed driver => @Mod_By_Kamal
         raise
 
 # ----------------------------------------------------------------------------------
