@@ -67,7 +67,6 @@ DESIGN_LIBRARIES = ["bootstrap", "tailwind", "bulma", "foundation", "materialize
 # ----------------------------------------------------------------------------------
 
 def setup_chrome_driver():
-def setup_chrome_driver():
     try:
         logger.info("Setting up ChromeDriver automatically...")
 
