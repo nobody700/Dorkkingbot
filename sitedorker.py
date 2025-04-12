@@ -67,13 +67,9 @@ DESIGN_LIBRARIES = ["bootstrap", "tailwind", "bulma", "foundation", "materialize
 # ----------------------------------------------------------------------------------
 
 def setup_chrome_driver():
-    """
-    Cross-platform setup for ChromeDriver. Skips 'apt-get' for non-Debian systems.
-    """
     try:
         logger.info("Setting up ChromeDriver automatically...")
 
-        # Skip package installation; assume wget/unzip are already present
         chromedriver_url = (
             "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/"
             "131.0.6778.108/linux64/chromedriver-linux64.zip"
@@ -82,13 +78,12 @@ def setup_chrome_driver():
         subprocess.run(['wget', chromedriver_url, '-O', 'chromedriver_linux64.zip'], check=True)
         subprocess.run(['unzip', '-o', 'chromedriver_linux64.zip'], check=True)
 
-        # Determine path
-        chromedriver_path = '/usr/local/bin/chromedriver'
-        if not os.path.exists(os.path.dirname(chromedriver_path)):
-            chromedriver_path = '/usr/bin/chromedriver'  # fallback
+        # Move to local path
+        local_path = os.path.expanduser("~/bin/chromedriver")
+        os.makedirs(os.path.dirname(local_path), exist_ok=True)
 
-        subprocess.run(['mv', 'chromedriver-linux64/chromedriver', chromedriver_path], check=True)
-        subprocess.run(['chmod', '+x', chromedriver_path], check=True)
+        subprocess.run(['mv', 'chromedriver-linux64/chromedriver', local_path], check=True)
+        subprocess.run(['chmod', '+x', local_path], check=True)
 
         subprocess.run(['rm', '-rf', 'chromedriver_linux64.zip', 'chromedriver-linux64'], check=True)
         logger.info("ChromeDriver setup completed successfully.")
@@ -167,7 +162,7 @@ def create_local_driver():
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome_options.add_experimental_option("useAutomationExtension", False)
 
-    service = ChromeService(executable_path='/usr/local/bin/chromedriver')
+    service = ChromeService(executable_path=os.path.expanduser("~/bin/chromedriver"))
     local_driver = webdriver.Chrome(service=service, options=chrome_options)
 
     # Apply stealth settings => @Mod_By_Kamal
